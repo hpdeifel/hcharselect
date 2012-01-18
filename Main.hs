@@ -11,19 +11,39 @@ import Control.Monad.Trans
 import System.Process
 import System.IO
 import Control.DeepSeq
+import System.Environment
+import Control.Exception
 
 windowHeight = 500
 windowWidth  = 500
+defaultFile  = "/usr/share/apps/kcharselect/kcharselect-data"
 
-parseThread var = do
+maybeParse file =
+  do chars <- try (parseFile file) :: IO (Either SomeException [Character])
+     case chars of
+       Right a -> return a
+       Left  a -> hPutStrLn stderr (show a) >> return []
+
+parseThread var file = do
   putStrLn "Parsing started"
-  chars <- parseFile "/usr/share/apps/kcharselect/kcharselect-data"
+  chars <- maybeParse file
   chars `deepseq` putStrLn "Parsing done"
   putMVar var chars
 
+usage = do
+  self <- getProgName
+  hPutStrLn stderr ("Usage: " ++ self ++ " [kcharselect-file]")
+
+getFilename = getArgs >>= \args -> do
+  case args of
+    [file]    -> return file
+    []        -> return defaultFile
+    otherwise -> usage >> fail "Could not parse args"
+
 main = do
+  filename <- getFilename
   chars <- newEmptyMVar
-  forkIO $ parseThread chars
+  forkIO $ parseThread chars filename
   initGUI
   window <- windowNew
   vbox <- vBoxNew False 0

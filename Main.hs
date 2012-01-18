@@ -10,12 +10,20 @@ import Control.Concurrent
 import Control.Monad.Trans
 import System.Process
 import System.IO
+import Control.DeepSeq
 
 windowHeight = 500
 windowWidth  = 500
 
-main = do
+parseThread var = do
+  putStrLn "Parsing started"
   chars <- parseFile "/usr/share/apps/kcharselect/kcharselect-data"
+  chars `deepseq` putStrLn "Parsing done"
+  putMVar var chars
+
+main = do
+  chars <- newEmptyMVar
+  forkIO $ parseThread chars
   initGUI
   window <- windowNew
   vbox <- vBoxNew False 0
@@ -46,7 +54,8 @@ main = do
   onEntryActivate entry $ do
     listStoreClear charModel
     text <- entryGetText entry
-    mapM_ (listStoreAppend charModel) (filterChars text chars)
+    chrs <- readMVar chars
+    mapM_ (listStoreAppend charModel) (filterChars text chrs)
 
   charList `on` keyPressEvent $ tryEvent $ do
     "j" <- eventKeyName

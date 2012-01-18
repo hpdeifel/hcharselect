@@ -7,12 +7,16 @@ import Control.Monad
 import Data.Char
 import Data.Bits
 import Codec.Binary.UTF8.String
+import Control.DeepSeq
 
 type Name = String
 data Character = Character Name Char
 
 instance Show Character where
   show (Character name char) = show (name, char)
+
+instance NFData Character where
+  rnf (Character name char) = name `deepseq` (char `deepseq` ())
 
 data CharRef = CharRef Char Int
 

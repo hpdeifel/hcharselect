@@ -85,6 +85,14 @@ main = do
     path2 <- liftIO $ treeModelGetPath charModel next
     liftIO $ treeViewSetCursor charList path2 Nothing
 
+  charList `on` keyPressEvent $ tryEvent $ do
+    "k" <- eventKeyName
+    (path,_) <- liftIO $ treeViewGetCursor charList
+    Just (TreeIter a b c d) <- liftIO $ treeModelGetIter charModel path
+    let prev = TreeIter a (if b == 0 then 0 else b-1) c d
+    path2 <- liftIO $ treeModelGetPath charModel prev
+    liftIO $ treeViewSetCursor charList path2 Nothing
+
   onRowActivated charList $ \path col -> do
     (Just iter) <- treeModelGetIter charModel path
     let idx = listStoreIterToIndex iter

@@ -103,8 +103,12 @@ main = do
   widgetShowAll window
   mainGUI
 
+filterChars :: String -> [Character] -> [Character]
 filterChars text chars = filter substring chars
-  where substring (Character name _) = isInfixOf (map toUpper text) name
+  where substring (Character name _) = substrIngore " ,.\t'-_" (map toUpper text) name
+
+substrIngore ignbag term text = isInfixOf (remBag term) (remBag text)
+  where remBag = filter (not . flip elem ignbag)
 
 addCol title model fun = do
   col <- treeViewColumnNew

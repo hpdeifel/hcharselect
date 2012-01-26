@@ -1,0 +1,58 @@
+* General
+
+  hcharselect lets you quickly copy UTF-8 characters to the clipboard
+  for your pasting pleasure.
+
+* Usage
+
+  hcharselect currently requires kcharselect's data file. You can get it
+  somewhere at kde.org or by installing kcharselect on your system.
+
+  By default it tries to open '/usr/share/apps/kcharselect/kcharselect-data'.
+  You can specify another file at the command line.
+
+** Invocation
+
+   The basic command line syntax is:
+
+   : hcharselect [kcharselect-data-file]
+
+** Modus Operandi
+
+   Just type your search string in the entry box at the top and hit /Enter/.
+   You will then get a list of matching UTF-8 characters in the list below.
+
+   To select a character from this list, type /Tab/ to switch to the list,
+   navigate to the right row with /j/, /k/, /Down-Arrow/ or /Up-Arrow/ and hit
+   /Enter/ again.
+
+   This will make hcharselect go away and your character appear in the primary
+   X-selection.
+
+** Keybindings
+
+   - Entry Box:
+
+     - Enter		:: Start search
+
+   - List Box:
+
+     - j/k		:: Move one row down/up
+     - Down-/Up-Arrow	:: Same as j/k
+     - Enter		:: Copy character and exit
+
+* Installation
+
+** Prerequisites
+   
+   You will need GHC and cabal first. The other dependencies are listed in the
+   'hcharselect.cabal' file and can be installed either with cabal or your
+   distribution's package manager.
+
+** Building and Installing
+
+   Simply use the following commands:
+
+   : runhaskell Setup.hs configure
+   : runhaskell Setup.hs build
+   : sudo runhaskell Setup.hs install

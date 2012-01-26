@@ -23,8 +23,8 @@
    You will then get a list of matching UTF-8 characters in the list below.
 
    To select a character from this list, type /Tab/ to switch to the list,
-   navigate to the right row with /j/, /k/, /Down-Arrow/ or /Up-Arrow/ and hit
-   /Enter/ again.
+   navigate to the right row with /j/, /k/, /Down-Arrow/ or /Up-Arrow/ and
+   hit /Enter/ again.
 
    This will make hcharselect go away and your character appear in the primary
    X-selection.

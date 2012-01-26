@@ -1,4 +1,4 @@
-module Parser (parseFile, Character(Character)) where
+module HCharselect.Parser (parseFile, Character(Character)) where
 import qualified Data.ByteString as B
 import System.IO
 import Data.Binary.Get

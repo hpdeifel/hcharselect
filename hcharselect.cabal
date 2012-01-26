@@ -1,12 +1,14 @@
-Name:		hcharselect
-Version:	0.1
-License:	GPL-3
-Cabal-Version:	>= 1.2
-Author:		Hans-Peter Deifel
-Homepage:	http://git.cs.fau.de/?p=lu03pevi/charselect
-Synopsis:	UTF-8 character selector
-Build-Type:	Simple
+Name:			hcharselect
+Version:		0.1
+License:		GPL-3
+Cabal-Version:		>= 1.2
+Author:			Hans-Peter Deifel
+Homepage:		http://git.cs.fau.de/?p=lu03pevi/charselect
+Synopsis:		UTF-8 character selector
+Build-Type:		Simple
+Extra-Source-Files:	README.org
 
 Executable hcharselect
   Build-Depends:	base, process, mtl, binary, bytestring, gtk >= 0.12.0, deepseq, utf8-string
+  GHC-Options:		-O3 -threaded
   Main-Is:		Main.hs

@@ -49,6 +49,8 @@
    'hcharselect.cabal' file and can be installed either with cabal or your
    distribution's package manager.
 
+   HCharselect also needs the 'xclip' program at runtime.
+
 ** Building and Installing
 
    Simply use the following commands:

@@ -20,7 +20,7 @@ Source-Repository head
   Location:		http://git.cs.fau.de/?p=lu03pevi/charselect
 
 Executable hcharselect
-  Build-Depends:	base, process, mtl, binary, bytestring, gtk >= 0.12.0, deepseq, utf8-string
+  Build-Depends:	base, process, mtl, bytestring, gtk >= 0.12.0, deepseq, utf8-string
   GHC-Options:		-O3 -threaded
   Main-Is:		Main.hs
   Other-Modules:	HCharselect.Get, HCharselect.Parser, HCharselect.Gui

@@ -16,21 +16,25 @@ version         = "This is hcharselect version 0.1"
 defaultDataFile = "/usr/share/apps/kcharselect/kcharselect-data"
 
 
-data Flag = Version | Help | DataFile FilePath
+data Flag = Version | Help | DataFile FilePath | Resizable
           deriving (Show)
 
 options =
   [ Option ['v'] ["version"]   (NoArg Version)          "version information"
   , Option ['h'] ["help"]      (NoArg Help)             "this help"
   , Option ['d'] ["data-file"] (ReqArg DataFile "FILE") "kcharselect-data file"
+  , Option []    ["resizable"] (NoArg Resizable) "let the window be resizable"
   ]
 
 
 
-data Config = Config {dataFile :: FilePath} deriving (Show)
+data Config = Config {
+  dataFile :: FilePath,
+  resizable :: Bool
+} deriving (Show)
 
 mkConf :: [Flag] -> IO Config
-mkConf [] = return $ Config { dataFile = defaultDataFile }
+mkConf [] = return $ Config { dataFile = defaultDataFile, resizable = False}
 mkConf (Version:_) = do
   putStrLn version
   exitWith ExitSuccess
@@ -41,6 +45,9 @@ mkConf (Help:_) = do
 mkConf (DataFile f:r) = do 
   conf <- mkConf r
   return $ conf { dataFile = f }
+mkConf (Resizable:r) = do
+  conf <- mkConf r
+  return $ conf { resizable = True }
 
 
 
@@ -61,7 +68,7 @@ main = do
 
   chars <- newEmptyMVar
   forkIO $ parseThread chars (dataFile conf)
-  gui chars
+  gui chars (resizable conf)
 
 maybeParse file =
   do chars <- try (parseFile file) :: IO (Either SomeException [Character])

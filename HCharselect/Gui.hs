@@ -15,7 +15,7 @@ import System.Environment
 windowHeight = 500
 windowWidth  = 500
 
-gui chars = do
+gui chars resizable = do
   initGUI
   window <- windowNew
   vbox <- vBoxNew False 0
@@ -26,7 +26,7 @@ gui chars = do
 
   set window [ widgetWidthRequest := windowWidth
              , widgetHeightRequest := windowHeight
-             , windowResizable := False
+             , windowResizable := resizable
              , windowWindowPosition := WinPosCenter
              , windowTitle := "Charselect"
              ]

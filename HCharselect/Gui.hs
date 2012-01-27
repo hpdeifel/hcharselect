@@ -38,8 +38,10 @@ gui chars = do
 
   col2 <- addCol "Char" charModel characterChar
   col1 <- addCol "Name" charModel characterName
+  col3 <- addCol "Aliases" charModel characterAliases
   treeViewAppendColumn charList col2
   treeViewAppendColumn charList col1
+  treeViewAppendColumn charList col3
 
   onDestroy window mainQuit
 
@@ -68,7 +70,7 @@ gui chars = do
   onRowActivated charList $ \path col -> do
     (Just iter) <- treeModelGetIter charModel path
     let idx = listStoreIterToIndex iter
-    Character _ char <- listStoreGetValue charModel idx
+    Character _ char _ <- listStoreGetValue charModel idx
     runXClip [char]
     mainQuit
     
@@ -77,7 +79,8 @@ gui chars = do
 
 filterChars :: String -> [Character] -> [Character]
 filterChars text chars = filter substring chars
-  where substring (Character name _) = substrIngore " ,.\t'-_" (map toUpper text) name
+  where substring (Character name _ aliases) = any match (name:aliases)
+        match = substrIngore " ,.\t'-_" (map toUpper text) . (map toUpper)
 
 substrIngore ignbag term text = isInfixOf (remBag term) (remBag text)
   where remBag = filter (not . flip elem ignbag)
@@ -91,8 +94,9 @@ addCol title model fun = do
     [cellText := (fun row)]
   return col
 
-characterName (Character n _) = n
-characterChar (Character _ c) = [c]
+characterName (Character n _ _) = n
+characterChar (Character _ c _) = [c]
+characterAliases (Character _ _ as) = show as
 
 
 runXClip :: String -> IO ()

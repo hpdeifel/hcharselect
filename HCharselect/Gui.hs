@@ -96,7 +96,7 @@ addCol title model fun = do
 
 characterName (Character n _ _) = n
 characterChar (Character _ c _) = [c]
-characterAliases (Character _ _ as) = show as
+characterAliases (Character _ _ as) = concat $ intersperse ", " as
 
 
 runXClip :: String -> IO ()

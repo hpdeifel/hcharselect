@@ -10,6 +10,7 @@ import System.IO
 
 import HCharselect.Gui
 import HCharselect.Parser
+import HCharselect.Concurrency
 
 usage name      = "Usage: " ++ name ++ " [OPTIONS] [-d data-file]\n"
 version         = "This is hcharselect version 0.1"
@@ -69,15 +70,3 @@ main = do
   chars <- newEmptyMVar
   forkIO $ parseThread chars (dataFile conf)
   gui chars (resizable conf)
-
-maybeParse file =
-  do chars <- try (parseFile file) :: IO (Either SomeException [Character])
-     case chars of
-       Right a -> return a
-       Left  a -> hPutStrLn stderr (show a) >> return []
-
-parseThread var file = do
-  putStrLn "Parsing started"
-  chars <- maybeParse file
-  chars `deepseq` putStrLn "Parsing done"
-  putMVar var chars

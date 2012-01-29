@@ -7,6 +7,7 @@ import Data.Char
 import Data.Bits
 import Control.DeepSeq
 import Control.Applicative
+import Control.Parallel.Strategies
 import Data.List
 
 import HCharselect.Get
@@ -19,6 +20,7 @@ instance NFData Character where
   rnf (Character name char aliases) = name `deepseq` (char `deepseq` (aliases `deepseq` ()))
 
 data CharRef = CharRef Char Int deriving (Show)
+
 data Detail = Detail {
   detChar :: Char,
   alias_offset :: Int,
@@ -32,6 +34,9 @@ data Header = Header {
   details_end :: Int
 } deriving (Show)
 
+instance NFData Header where
+  rnf (Header nb ne db de) = nb `seq` ne `seq` db `seq` de `seq` ()
+
 parseFile :: FilePath -> IO [Character]
 parseFile filename = withBinaryFile filename ReadMode $ \file -> do
   contents <- B.hGetContents file
@@ -39,14 +44,20 @@ parseFile filename = withBinaryFile filename ReadMode $ \file -> do
     Right a -> return a
     Left err -> fail err
 
+with :: Get a -> Strategy a -> Get a
+with g s = do { r <- g; return (r `using` s); }
+
+
 parseFile' :: Get [Character]
 parseFile' = do
-  header <- parseHeader
+  header <- parseHeader `with` rdeepseq
   charRefs <- parseCharRefs header
   details <- parseDetails header
-  
-  merge <$> readRefNames charRefs <*> readRefAliases details
---  putTogether <$> readRefNames charRefs <*> return (repeat ('a', []))
+
+  refs <- readRefNames charRefs `with` (parList rdeepseq)
+  aliases <- readRefAliases details `with` (parList rdeepseq)
+
+  return $ (merge refs aliases `using` rdeepseq)
 
 parseHeader :: Get Header
 parseHeader = goto 4 *> (Header <$> int <*> int <*> int <*> int)

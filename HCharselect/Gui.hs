@@ -2,15 +2,17 @@
 
 module HCharselect.Gui (gui) where
 import Graphics.UI.Gtk
-import HCharselect.Parser
 import Data.List
 import Control.Monad
-import Data.Char
-import Control.Concurrent
 import Control.Monad.Trans
 import System.Process
 import System.IO
 import System.Environment
+
+import Control.Concurrent
+
+import HCharselect.Concurrency
+import HCharselect.Parser
 
 windowHeight = 500
 windowWidth  = 500
@@ -23,6 +25,9 @@ gui chars resizable = do
   scroll <- scrolledWindowNew Nothing Nothing
   charModel <- listStoreNew []
   charList <- treeViewNewWithModel charModel
+
+  ctx <- newCompCtx
+  timeoutAddFull (execCtx ctx >> return True) priorityDefaultIdle 50
 
   set window [ widgetWidthRequest := windowWidth
              , widgetHeightRequest := windowHeight
@@ -43,13 +48,23 @@ gui chars resizable = do
   treeViewAppendColumn charList col1
   treeViewAppendColumn charList col3
 
+  -- Incremental Search Thread
+  incVar <- newEmptyMVar
+  incThread <- forkIO $ filterThread incVar chars ctx $ \res -> do
+    listStoreClear charModel
+    mapM_ (listStoreAppend charModel) res
+  let incSearch = parSearch incThread incVar
+
   onDestroy window mainQuit
 
-  onEntryActivate entry $ do
-    listStoreClear charModel
+  onEditableChanged entry $ do
     text <- entryGetText entry
-    chrs <- readMVar chars
-    mapM_ (listStoreAppend charModel) (filterChars text chrs)
+    when (length text >= 3) $ do
+      incSearch text
+
+  onEntryActivate entry $ do
+    text <- entryGetText entry
+    incSearch text
 
   charList `on` keyPressEvent $ tryEvent $ do
     "j" <- eventKeyName
@@ -76,14 +91,6 @@ gui chars resizable = do
     
   widgetShowAll window
   mainGUI
-
-filterChars :: String -> [Character] -> [Character]
-filterChars text chars = filter substring chars
-  where substring (Character name _ aliases) = any match (name:aliases)
-        match = substrIngore " ,.\t'-_" (map toUpper text) . (map toUpper)
-
-substrIngore ignbag term text = isInfixOf (remBag term) (remBag text)
-  where remBag = filter (not . flip elem ignbag)
 
 addCol title model fun = do
   col <- treeViewColumnNew

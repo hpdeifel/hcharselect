@@ -35,7 +35,7 @@ data Config = Config {
 } deriving (Show)
 
 mkConf :: [Flag] -> IO Config
-mkConf [] = return $ Config { dataFile = defaultDataFile, resizable = False}
+mkConf [] = return Config { dataFile = defaultDataFile, resizable = False}
 mkConf (Version:_) = do
   putStrLn version
   exitWith ExitSuccess

@@ -1,5 +1,3 @@
-{-# LANGUAGE BangPatterns #-}
-
 module HCharselect.Gui (gui) where
 import Graphics.UI.Gtk
 import Data.List
@@ -59,7 +57,7 @@ gui chars resizable = do
 
   onEditableChanged entry $ do
     text <- entryGetText entry
-    when (length text >= 3) $ do
+    when (length text >= 3) $
       incSearch text
 
   onEntryActivate entry $ do
@@ -98,12 +96,12 @@ addCol title model fun = do
   renderer <- cellRendererTextNew
   cellLayoutPackStart col renderer False
   cellLayoutSetAttributes col renderer model $ \row ->
-    [cellText := (fun row)]
+    [cellText := fun row]
   return col
 
 characterName (Character n _ _) = n
 characterChar (Character _ c _) = [c]
-characterAliases (Character _ _ as) = concat $ intersperse ", " as
+characterAliases (Character _ _ as) = intercalate ", " as
 
 
 runXClip :: String -> IO ()

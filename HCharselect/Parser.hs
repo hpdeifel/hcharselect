@@ -23,15 +23,15 @@ data CharRef = CharRef Char Int deriving (Show)
 
 data Detail = Detail {
   detChar :: Char,
-  alias_offset :: Int,
-  alias_count :: Int
+  aliasOffset  :: Int,
+  aliasCount :: Int
 } deriving (Show)
 
 data Header = Header {
-  names_begin :: Int,
-  names_end :: Int,
-  details_begin :: Int,
-  details_end :: Int
+  namesBegin :: Int,
+  namesEnd :: Int,
+  detailsBegin :: Int,
+  detailsEnd :: Int
 } deriving (Show)
 
 instance NFData Header where
@@ -54,10 +54,10 @@ parseFile' = do
   charRefs <- parseCharRefs header
   details <- parseDetails header
 
-  refs <- readRefNames charRefs `with` (parList rdeepseq)
-  aliases <- readRefAliases details `with` (parList rdeepseq)
+  refs <- readRefNames charRefs `with` (rpar `dot` rdeepseq)
+  aliases <- readRefAliases details `with` rdeepseq
 
-  return $ (merge refs aliases `using` rdeepseq)
+  return (merge refs aliases `using` rdeepseq)
 
 parseHeader :: Get Header
 parseHeader = goto 4 *> (Header <$> int <*> int <*> int <*> int)
@@ -65,19 +65,19 @@ parseHeader = goto 4 *> (Header <$> int <*> int <*> int <*> int)
 
 parseCharRefs :: Header -> Get [CharRef]
 parseCharRefs header = goto start *> count ((end-start)`quot`6) readCharRef
-  where start = names_begin header
-        end   = names_end header
+  where start = namesBegin header
+        end   = namesEnd header
 
 parseDetails :: Header -> Get [Detail]
 parseDetails header = goto start *> count ((end-start)`quot`27) readDetail
-  where start = details_begin header
-        end   = details_end header
+  where start = detailsBegin header
+        end   = detailsEnd header
  
 readCharRef :: Get CharRef
 readCharRef = CharRef <$> getUTF16Char <*> ((+1) <$> getInt getWord32)
 
 readRefNames :: [CharRef] -> Get [(Char, Name)]
-readRefNames refs = mapM lookupCharName refs
+readRefNames = mapM lookupCharName
 
 lookupCharName :: CharRef -> Get (Char, Name)
 lookupCharName (CharRef c offset) = goto offset *> do
@@ -88,7 +88,7 @@ readDetail :: Get Detail
 readDetail = Detail <$> getUTF16Char <*> getInt getWord32 <*> getInt getWord8 <* skip 20
 
 readRefAliases :: [Detail] -> Get [(Char, [Alias])]
-readRefAliases dets = mapM lookupDetails dets
+readRefAliases = mapM lookupDetails
 
 lookupDetails :: Detail -> Get (Char, [Alias])
 lookupDetails (Detail c off cnt) = goto off *> do
@@ -101,6 +101,6 @@ merge ns ds = helper (sortBy sorter ns) (sortBy sorter ds)
         helper [] _ = []
         helper ns [] = map (\(c,n) -> Character n c []) ns
         helper ns@((c1,n):ns') ds@((c2,as):ds')
-          | c1 < c2   = (Character n c1 []):(helper ns' ds)
-          | c1 == c2  = (Character n c1 as):(helper ns' ds')
+          | c1 < c2   = Character n c1 [] : helper ns' ds
+          | c1 == c2  = Character n c1 as : helper ns' ds'
           | otherwise = helper ns ds'

@@ -5,19 +5,11 @@ import Data.Word
 import Control.Monad
 import Data.Char
 import Data.Bits
-import Control.DeepSeq
 import Control.Applicative
-import Control.Parallel.Strategies
 import Data.List
 
 import HCharselect.Get
-
-type Name = String
-type Alias = String
-data Character = Character Name Char [Alias] deriving Show
-
-instance NFData Character where
-  rnf (Character name char aliases) = name `deepseq` (char `deepseq` (aliases `deepseq` ()))
+import HCharselect.Character
 
 data CharRef = CharRef Char Int deriving (Show)
 
@@ -34,9 +26,6 @@ data Header = Header {
   detailsEnd :: Int
 } deriving (Show)
 
-instance NFData Header where
-  rnf (Header nb ne db de) = nb `seq` ne `seq` db `seq` de `seq` ()
-
 parseFile :: FilePath -> IO [Character]
 parseFile filename = withBinaryFile filename ReadMode $ \file -> do
   contents <- B.hGetContents file
@@ -44,20 +33,16 @@ parseFile filename = withBinaryFile filename ReadMode $ \file -> do
     Right a -> return a
     Left err -> fail err
 
-with :: Get a -> Strategy a -> Get a
-with g s = do { r <- g; return (r `using` s); }
-
-
 parseFile' :: Get [Character]
 parseFile' = do
-  header <- parseHeader `with` rdeepseq
+  header <- parseHeader
   charRefs <- parseCharRefs header
   details <- parseDetails header
 
-  refs <- readRefNames charRefs `with` (rpar `dot` rdeepseq)
-  aliases <- readRefAliases details `with` rdeepseq
+  refs <- readRefNames charRefs
+  aliases <- readRefAliases details
 
-  return (merge refs aliases `using` rdeepseq)
+  return $ merge refs aliases
 
 parseHeader :: Get Header
 parseHeader = goto 4 *> (Header <$> int <*> int <*> int <*> int)

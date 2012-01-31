@@ -31,8 +31,25 @@ Executable hcharselect
                         parallel
 
   GHC-Options:          -O3 -threaded
-  Main-Is:              Main.hs
+  Main-Is:              GuiMain.hs
   Other-Modules:        HCharselect.Get,
                         HCharselect.Parser,
                         HCharselect.Gui,
                         HCharselect.Concurrency
+                        HCharselect.Character
+                        HCharselect.Search
+                        HCharselect.CommonOptions
+
+Executable hcs
+  Build-Depends:        base,
+                        mtl,
+                        bytestring,
+                        utf8-string
+
+  GHC-Options:          -O3 -threaded
+  Main-Is:              CliMain.hs
+  Other-Modules:        HCharselect.Get,
+                        HCharselect.Parser,
+                        HCharselect.Character
+                        HCharselect.Search
+                        HCharselect.CommonOptions

@@ -14,7 +14,7 @@ import HCharselect.CommonOptions
 
 data GuiConfig = GuiConf { resizable :: Bool }
 
-defaultGuiConfig = GuiConf True
+defaultGuiConfig = GuiConf False
 
 guiOptions =
   commonOptions ++ [ Option [] ["resizable"] (NoArg (setOther $ setResizable)) "let the window be resizable" ]

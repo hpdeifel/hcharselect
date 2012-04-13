@@ -1,3 +1,4 @@
+{-# LANGUAGE PackageImports #-}
 module HCharselect.Gui (gui) where
 import Graphics.UI.Gtk
 import Data.List
@@ -15,7 +16,7 @@ import HCharselect.Parser
 windowHeight = 500
 windowWidth  = 500
 
-gui chars resizable = do
+gui chars = do
   initGUI
   window <- windowNew
   vbox <- vBoxNew False 0
@@ -29,8 +30,8 @@ gui chars resizable = do
 
   set window [ widgetWidthRequest := windowWidth
              , widgetHeightRequest := windowHeight
-             , windowResizable := resizable
              , windowWindowPosition := WinPosCenter
+             , windowTypeHint := WindowTypeHintDialog
              , windowTitle := "Charselect"
              ]
 

@@ -21,12 +21,10 @@ import HCharselect.Parser
 import HCharselect.Search
 
 parseParallel :: FilePath -> IO [Character]
-parseParallel filename = do
-  chars <- parseFile filename
-  return chars
+parseParallel = parseFile
 
 parseThread var file = do
-  chars <- fmap (flip using rdeepseq) $ parseParallel file
+  chars <- fmap (`using` rdeepseq) $ parseParallel file
   putMVar var chars
 
 

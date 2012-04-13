@@ -2,3 +2,5 @@ dist
 *.hi
 *.o
 hcharselect
+TAGS
+tags

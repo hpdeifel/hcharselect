@@ -3,7 +3,7 @@ module HCharselect.Gui (gui) where
 import Graphics.UI.Gtk
 import Data.List
 import Control.Monad
-import Control.Monad.Trans
+import "mtl" Control.Monad.Trans
 import System.Process
 import System.IO
 import System.Environment
@@ -54,6 +54,12 @@ gui chars = do
     mapM_ (listStoreAppend charModel) res
   let incSearch = parSearch incThread incVar
 
+      copyCurrent path = do
+        (Just iter) <- treeModelGetIter charModel path
+        let idx = listStoreIterToIndex iter
+        Character _ char _ <- listStoreGetValue charModel idx
+        runXClip [char]
+
   onDestroy window mainQuit
 
   onEditableChanged entry $ do
@@ -81,11 +87,14 @@ gui chars = do
     path2 <- liftIO $ treeModelGetPath charModel prev
     liftIO $ treeViewSetCursor charList path2 Nothing
 
+  charList `on` keyPressEvent $ tryEvent $ do
+    "Return" <- eventKeyName
+    [Shift] <- eventModifier
+    (path,_) <- liftIO $ treeViewGetCursor charList
+    liftIO $ copyCurrent path
+
   onRowActivated charList $ \path col -> do
-    (Just iter) <- treeModelGetIter charModel path
-    let idx = listStoreIterToIndex iter
-    Character _ char _ <- listStoreGetValue charModel idx
-    runXClip [char]
+    copyCurrent path
     mainQuit
     
   widgetShowAll window

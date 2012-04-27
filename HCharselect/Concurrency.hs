@@ -14,6 +14,7 @@ import Control.Exception.Base
 import Control.Monad
 import Data.Typeable
 import Data.List
+import Data.Maybe
 import Data.IORef
 import Control.DeepSeq
 
@@ -70,7 +71,8 @@ parSearch thread var str = do
 
 filterChars var initChars str' = do
   st@(str, chars) <- readIORef var
-  let res = filter (strMatcher str') chars'
-      chars' = if str `isPrefixOf` str' && not (null str)
+  let int = parseInt str'
+      res = filter (strOrCodeMatcher str') chars'
+      chars' = if str `isPrefixOf` str' && not (null str) && isNothing int
                then chars else initChars
   return $ res `deepseq` (str', res)

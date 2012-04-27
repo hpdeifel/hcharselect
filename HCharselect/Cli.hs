@@ -8,7 +8,7 @@ import HCharselect.Search
 
 cli :: [Character] -> String -> IO ()
 cli chars search = mapM_ printChar filtered
-  where filtered = filter (strMatcher search) chars
+  where filtered = filter (strOrCodeMatcher search) chars
 
 printChar :: Character -> IO ()
 printChar (Character n c _) = putStrLn (c:'\t':n)

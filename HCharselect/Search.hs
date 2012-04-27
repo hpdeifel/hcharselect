@@ -4,6 +4,7 @@ import Data.Char
 import Data.List
 
 import HCharselect.Character
+import HCharselect.Utils
 
 strOrCodeMatcher :: String -> Character -> Bool
 strOrCodeMatcher str = case parseInt str of
@@ -15,11 +16,6 @@ strMatcher str (Character n _ as) = any (match str) (n:as)
 
 codeMatcher :: Int -> Character -> Bool
 codeMatcher code (Character _ char _) = code == ord char
-
-parseInt :: String -> Maybe Int
-parseInt str = case reads str :: [(Int, String)] of
-  [(code,rest)] -> if rest == "" then Just code else Nothing
-  []            -> Nothing
 
 match needle haystack = prep needle `matchWords` prep haystack
   where prep = words . remBag

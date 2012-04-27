@@ -27,7 +27,8 @@ Executable hcharselect
                         gtk >= 0.12.0,
                         deepseq,
                         utf8-string,
-                        parallel
+                        parallel,
+                        containers
 
   GHC-Options:          -O3 -threaded
   Main-Is:              GuiMain.hs

@@ -20,6 +20,7 @@ import Control.DeepSeq
 
 import HCharselect.Parser
 import HCharselect.Search
+import HCharselect.Utils
 
 parseParallel :: FilePath -> IO [Character]
 parseParallel = parseFile

@@ -15,12 +15,14 @@
 
    The basic command line syntax is:
 
-   : hcharselect [kcharselect-data-file]
+   : hcharselect [-d kcharselect-data-file]
 
 ** Modus Operandi
 
-   Just type your search string in the entry box at the top and hit /Enter/.
-   You will then get a list of matching UTF-8 characters in the list below.
+   Just type your search string in the entry box at the top and you will
+   instantly get a list of matching UTF-8 characters in the list below. If the
+   search string is shorter than 3 characters, you have to press /Enter/ to
+   explicitly start the search.
 
    To select a character from this list, type /Tab/ to switch to the list,
    navigate to the right row with /j/, /k/, /Down-Arrow/ or /Up-Arrow/ and
@@ -31,15 +33,18 @@
 
 ** Keybindings
 
-   - Entry Box:
+   - Entry box:
 
      - Enter		:: Start search
+     - Tab              :: Switch to list box
 
-   - List Box:
+   - List box:
 
      - j/k		:: Move one row down/up
      - Down-/Up-Arrow	:: Same as j/k
+     - Tab              :: Switch to entry box
      - Enter		:: Copy character and exit
+     - Shift-Enter      :: Copy character but don't exit
 
 * Installation
 
@@ -58,3 +63,6 @@
    : runhaskell Setup.hs configure
    : runhaskell Setup.hs build
    : sudo runhaskell Setup.hs install
+
+   Type 'runhaskell Setup.hs configure --help' to get possible compile-time
+   configuration options.

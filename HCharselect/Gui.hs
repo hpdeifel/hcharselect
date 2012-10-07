@@ -22,7 +22,7 @@ gui chars = do
   vbox      <- vBoxNew False 0
   entry     <- entryNew
   scroll    <- scrolledWindowNew Nothing Nothing
-  charModel <- listStoreNew []
+  charModel <- listStoreNewDND [] (Just dragSourceIface) Nothing
   charList  <- treeViewNewWithModel charModel
 
   ctx <- newCompCtx
@@ -48,6 +48,11 @@ gui chars = do
   treeViewAppendColumn charList col2
   treeViewAppendColumn charList col1
   treeViewAppendColumn charList col3
+
+  -- Drag 'n Drop
+  targets <- targetListNew
+  targetListAddTextTargets targets 42
+  treeViewEnableModelDragSource charList [Button1] targets [ActionCopy]
 
   -- Incremental Search Thread
   incVar <- newEmptyMVar
@@ -122,3 +127,19 @@ runXClip string = do
   hPutStr input string
   hClose input
   waitForProcess pid >> return ()
+
+dragGet :: ListStore Character -> TreePath -> SelectionDataM Bool
+dragGet model path = do
+  Just iter <- liftIO $ treeModelGetIter model path
+  let idx = listStoreIterToIndex iter
+  Character _ char _ <- liftIO $ listStoreGetValue model idx
+
+  selectionDataSetText [char]
+
+  return True
+
+dragSourceIface = DragSourceIface {
+  treeDragSourceRowDraggable = \_ _ -> return True,
+  treeDragSourceDragDataDelete = \_ _ -> return False,
+  treeDragSourceDragDataGet = dragGet
+}

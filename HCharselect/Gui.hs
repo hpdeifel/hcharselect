@@ -18,15 +18,17 @@ windowWidth  = 500
 
 gui chars = do
   initGUI
-  window <- windowNew
-  vbox <- vBoxNew False 0
-  entry <- entryNew
-  scroll <- scrolledWindowNew Nothing Nothing
+  window    <- windowNew
+  vbox      <- vBoxNew False 0
+  entry     <- entryNew
+  scroll    <- scrolledWindowNew Nothing Nothing
   charModel <- listStoreNew []
-  charList <- treeViewNewWithModel charModel
+  charList  <- treeViewNewWithModel charModel
 
   ctx <- newCompCtx
   timeoutAddFull (execCtx ctx >> return True) priorityDefaultIdle 50
+
+  scrolledWindowSetPolicy scroll PolicyAutomatic PolicyAutomatic
 
   set window [ widgetWidthRequest := windowWidth
              , widgetHeightRequest := windowHeight

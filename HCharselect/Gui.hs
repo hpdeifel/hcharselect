@@ -24,6 +24,8 @@ gui chars = do
   scroll    <- scrolledWindowNew Nothing Nothing
   charModel <- listStoreNewDND [] (Just dragSourceIface) Nothing
   charList  <- treeViewNewWithModel charModel
+  dragImg   <- labelNew Nothing
+  dragWin   <- offscreenWindowNew
 
   ctx <- newCompCtx
   timeoutAddFull (execCtx ctx >> return True) priorityDefaultIdle 50
@@ -49,10 +51,33 @@ gui chars = do
   treeViewAppendColumn charList col1
   treeViewAppendColumn charList col3
 
+  containerAdd dragWin dragImg
+  widgetShowAll dragWin
+
   -- Drag 'n Drop
   targets <- targetListNew
   targetListAddTextTargets targets 42
   treeViewEnableModelDragSource charList [Button1] targets [ActionCopy]
+
+  -- horrible, horrible kludge. Needed to get the dragged row
+  -- Yeah, GTK sucks
+  charList `on` buttonPressEvent $ tryEvent $ do
+    LeftButton <- eventButton
+    (x, y)     <- eventCoordinates
+
+    Just (path,_,_) <- liftIO $ treeViewGetPathAtPos charList (round x, round y)
+    Just iter <- liftIO $ treeModelGetIter charModel path
+
+    let idx = listStoreIterToIndex iter
+    Character _ char _ <- liftIO $ listStoreGetValue charModel idx
+
+    liftIO $ labelSetMarkup dragImg ("<span size='xx-large'>" ++ [char] ++ "</span>")
+    stopEvent
+
+  charList `after` dragBegin $ \context -> do
+    (x, y) <- widgetGetSize dragWin
+    Just pixbuf <- offscreenWindowGetPixbuf dragWin
+    dragSetIconPixbuf context pixbuf x y
 
   -- Incremental Search Thread
   incVar <- newEmptyMVar

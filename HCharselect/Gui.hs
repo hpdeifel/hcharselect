@@ -27,6 +27,10 @@ gui chars = do
   dragImg   <- labelNew Nothing
   dragWin   <- offscreenWindowNew
 
+  tooltips  <- tooltipsNew
+  tooltipsSetTip tooltips charList
+    "Double-click to copy character and exit. Drag to just copy character" ""
+
   ctx <- newCompCtx
   timeoutAddFull (execCtx ctx >> return True) priorityDefaultIdle 50
 

@@ -129,6 +129,10 @@ gui chars = do
     (path,_) <- liftIO $ treeViewGetCursor charList
     liftIO $ copyCurrent path
 
+  window `on` keyPressEvent $ tryEvent $ do
+    "Escape" <- eventKeyName
+    liftIO $ mainQuit
+
   onRowActivated charList $ \path col -> do
     copyCurrent path
     mainQuit

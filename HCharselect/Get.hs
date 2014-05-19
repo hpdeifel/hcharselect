@@ -74,7 +74,7 @@ sepBy f g = do
     then return []
     else (res:) <$> sepBy f g
 
-(<.|.>) :: (Bits c, Integral a, Integral b) => Get a -> Get b -> Get c
+(<.|.>) :: (Num c, Bits c, Integral a, Integral b) => Get a -> Get b -> Get c
 a <.|.> b = do
   off1 <- offset
   ares <- getInt a

@@ -28,7 +28,8 @@ Executable hcharselect
                         deepseq,
                         utf8-string,
                         parallel,
-                        containers
+                        containers,
+                        text
 
   GHC-Options:          -O3 -threaded
   Main-Is:              GuiMain.hs

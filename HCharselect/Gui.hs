@@ -7,6 +7,8 @@ import "mtl" Control.Monad.Trans
 import System.Process
 import System.IO
 import System.Environment
+import Data.Text (unpack)
+import Control.Applicative
 
 import Control.Concurrent
 
@@ -24,7 +26,7 @@ gui chars = do
   scroll    <- scrolledWindowNew Nothing Nothing
   charModel <- listStoreNewDND [] (Just dragSourceIface) Nothing
   charList  <- treeViewNewWithModel charModel
-  dragImg   <- labelNew Nothing
+  dragImg   <- labelNew (Nothing :: Maybe String)
   dragWin   <- offscreenWindowNew
 
   tooltips  <- tooltipsNew
@@ -108,7 +110,7 @@ gui chars = do
     incSearch text
 
   charList `on` keyPressEvent $ tryEvent $ do
-    "j" <- eventKeyName
+    "j" <- unpack <$> eventKeyName
     (path,_) <- liftIO $ treeViewGetCursor charList
     Just iter <- liftIO $ treeModelGetIter charModel path
     (Just next) <- liftIO $ treeModelIterNext charModel iter
@@ -116,7 +118,7 @@ gui chars = do
     liftIO $ treeViewSetCursor charList path2 Nothing
 
   charList `on` keyPressEvent $ tryEvent $ do
-    "k" <- eventKeyName
+    "k" <- unpack <$> eventKeyName
     (path,_) <- liftIO $ treeViewGetCursor charList
     Just (TreeIter a b c d) <- liftIO $ treeModelGetIter charModel path
     let prev = TreeIter a (if b == 0 then 0 else b-1) c d
@@ -124,19 +126,19 @@ gui chars = do
     liftIO $ treeViewSetCursor charList path2 Nothing
 
   charList `on` keyPressEvent $ tryEvent $ do
-    "Return" <- eventKeyName
+    "Return" <- unpack <$> eventKeyName
     [Shift] <- eventModifier
     (path,_) <- liftIO $ treeViewGetCursor charList
     liftIO $ copyCurrent path
 
   window `on` keyPressEvent $ tryEvent $ do
-    "Escape" <- eventKeyName
+    "Escape" <- unpack <$> eventKeyName
     liftIO $ mainQuit
 
   onRowActivated charList $ \path col -> do
     copyCurrent path
     mainQuit
-    
+
   widgetShowAll window
   mainGUI
 

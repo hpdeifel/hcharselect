@@ -4,3 +4,4 @@ dist
 hcharselect
 TAGS
 tags
+.cabal-sandbox

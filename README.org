@@ -1,6 +1,6 @@
 * General
 
-  hcharselect lets you quickly copy UTF-8 characters to the clipboard
+  *hcharselect* lets you quickly copy UTF-8 characters to the clipboard
   for your pasting pleasure.
 
 * Usage
@@ -8,7 +8,7 @@
   hcharselect currently requires kcharselect's data file. You can get it
   somewhere at kde.org or by installing kcharselect on your system.
 
-  By default it tries to open '/usr/share/apps/kcharselect/kcharselect-data'.
+  By default it tries to open =/usr/share/apps/kcharselect/kcharselect-data=.
   You can specify another file at the command line.
 
 ** Invocation
@@ -24,9 +24,9 @@
    search string is shorter than 3 characters, you have to press /Enter/ to
    explicitly start the search.
 
-   To select a character from this list, type /Tab/ to switch to the list,
-   navigate to the right row with /j/, /k/, /Down-Arrow/ or /Up-Arrow/ and
-   hit /Enter/ again.
+   To select a character from this list, type ~Tab~ to switch to the list,
+   navigate to the right row with ~j~, ~k~, ~Down-Arrow~ or ~Up-Arrow~ and
+   hit ~Enter~ again.
 
    This will make hcharselect go away and your character appear in the primary
    X-selection.
@@ -51,10 +51,10 @@
 ** Prerequisites
    
    You will need GHC and cabal first. The other dependencies are listed in the
-   'hcharselect.cabal' file and can be installed either with cabal or your
+   =hcharselect.cabal= file and can be installed either with cabal or your
    distribution's package manager.
 
-   HCharselect also needs the 'xclip' program at runtime.
+   HCharselect also needs the =xclip= program at runtime.
 
 ** Building and Installing
 
@@ -64,5 +64,5 @@
    : runhaskell Setup.hs build
    : sudo runhaskell Setup.hs install
 
-   Type 'runhaskell Setup.hs configure --help' to get possible compile-time
+   Type ~runhaskell Setup.hs configure --help~ to get possible compile-time
    configuration options.

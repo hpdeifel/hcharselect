@@ -3,6 +3,8 @@
   *hcharselect* lets you quickly copy UTF-8 characters to the clipboard
   for your pasting pleasure.
 
+  [[file:screenshots/hcharselect.png]]
+
 * Usage
 
   hcharselect currently requires kcharselect's data file. You can get it

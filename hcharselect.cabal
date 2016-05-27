@@ -33,13 +33,14 @@ Executable hcharselect
 
   GHC-Options:          -O3 -threaded
   Main-Is:              GuiMain.hs
-  Other-Modules:        HCharselect.Get,
-                        HCharselect.Parser,
-                        HCharselect.Gui,
-                        HCharselect.Concurrency
-                        HCharselect.Character
-                        HCharselect.Search
-                        HCharselect.CommonOptions
+  Other-Modules:        HCharselect.Get
+                      , HCharselect.Parser
+                      , HCharselect.Gui
+                      , HCharselect.Concurrency
+                      , HCharselect.Character
+                      , HCharselect.Search
+                      , HCharselect.CommonOptions
+                      , HCharselect.Utils
 
 Executable hcs
   Build-Depends:        base,
@@ -49,8 +50,10 @@ Executable hcs
 
   GHC-Options:          -O3 -threaded
   Main-Is:              CliMain.hs
-  Other-Modules:        HCharselect.Get,
-                        HCharselect.Parser,
-                        HCharselect.Character
-                        HCharselect.Search
-                        HCharselect.CommonOptions
+  Other-Modules:        HCharselect.Get
+                      , HCharselect.Parser
+                      , HCharselect.Character
+                      , HCharselect.Search
+                      , HCharselect.CommonOptions
+                      , HCharselect.Cli
+                      , HCharselect.Utils

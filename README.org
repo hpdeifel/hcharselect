@@ -1,3 +1,7 @@
+* Status
+
+This repo is *not maintained* any more!
+
 * General
 
   *hcharselect* lets you quickly copy UTF-8 characters to the clipboard
